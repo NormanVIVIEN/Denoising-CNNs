@@ -68,14 +68,25 @@ denoising-autoencoder/
 │   ├── data.py         # _to_gray64, load_from_folder, train/test split
 │   ├── noise.py         # add_gaussian_noise, seeded generators
 │   ├── models.py         # DenoisingAutoencoder, UNetDenoisingAutoencoder, DnCNN
-│   ├── evaluate.py       # evaluate(), baseline(), hybrid_loss(), comparison table
-│   ├── train.py          # training loop, checkpointing, CLI
-│   └── visualize.py      # reconstruction grids, loss curves
-├── notebook.ipynb        # exploratory notebook this project was built from
+│   ├── evaluate.py       # evaluate(), baseline(), classical_baselines(), hybrid_loss(), comparison table
+│   ├── train.py          # train_model(), CLI (argparse), checkpointing
+│   └── visualize.py      # reconstruction grids, loss curves, metric bar charts
+├── notebook.ipynb        # full comparison notebook, built on top of src/
 └── outputs/
     ├── checkpoints/
     └── figures/
 ```
+
+## Notebook
+
+`notebook.ipynb` is the main, narrative entry point — it imports everything from `src/`
+(no duplicated logic) and walks through eleven sections: reproducibility setup, data/noise
+loading, the three architectures with a parameter-count and inference-latency comparison,
+a same-budget architecture comparison, an `alpha` (MSE vs. SSIM) sweep, a batch-size sweep,
+an overfitting study, a comparison against non-learned classical denoisers (Gaussian blur,
+median filter, Non-Local Means), qualitative reconstruction examples, a results template to
+fill in, and further-work ideas. Point `args.data_dir` at your own image folder and run it
+top to bottom; `src/train.py`'s CLI (below) covers the same ground non-interactively.
 
 ## Installation
 
