@@ -46,10 +46,10 @@ earlier, smaller image size; it actually resizes to 128×128, not 64×64.)
    reference notebook: seed `4321` for the test set, `1321` for the
    train-eval set) so that reconstruction error stays comparable across
    epochs and across models. During **training**, noise is instead
-   re-sampled fresh at every batch from the unseeded default RNG —
+   re-sampled fresh at every batch from the unseeded default RNG
    never the fixed evaluation draw — which stops the model from
    memorizing one noise pattern and acts as a form of data augmentation.
-3. **Models** (`src/models.py`) — see the detailed section below.
+3. **Models** (`src/models.py`) see the detailed section below.
 4. **Training** (`src/train.py`, currently `Train.py`). Each model is
    trained with the same hybrid loss:
 
@@ -80,7 +80,7 @@ All three models live in `src/models.py` (currently `AECNN.py`,
 the actual class definitions, not on the reference papers alone — where
 the two disagree, that's called out explicitly.
 
-### 1. `DenoisingAutoencoder` — plain convolutional autoencoder
+### 1. `DenoisingAutoencoder` plain convolutional autoencoder
 
 A fully learned encoder–decoder with **no skip connections**; all
 information reaching the decoder must pass through the bottleneck.
@@ -94,7 +94,7 @@ Decoder (stride-2 transposed convs, kernel 4×4, padding 1, mirrored):
 ```
 
 With the notebook's default `base=64`, that's channel widths
-64 → 128 → 256 → 512 and a bottleneck of 8×8×512 = 32,768 values —
+64 → 128 → 256 → 512 and a bottleneck of 8×8×512 = 32,768 values
 larger than the 128×128 = 16,384-pixel input, so the code is an
 **over-complete**, not compressive, autoencoder. Regularization instead
 comes from the noise corruption itself and convolutional weight sharing.
@@ -103,11 +103,11 @@ encoder/decoder layer sizes for `base=64` gives exactly **4,303,809**
 parameters, matching the notebook's printed `Model parameters` line.
 
 Design choices, as commented in the notebook:
-- **Stride-2 convolutions instead of max-pooling** for downsampling — a
+- **Stride-2 convolutions instead of max-pooling** for downsampling a
   learned combination of neighboring pixels averages out independent
   noise while preserving correlated image content, rather than imposing
   a fixed max rule.
-- **Decoder kernel is 4×4 (not 3×3) with stride 2** — a kernel divisible
+- **Decoder kernel is 4×4 (not 3×3) with stride 2** a kernel divisible
   by the stride gives uniform overlap of the transposed-convolution
   "stamps" at every output pixel, avoiding the checkerboard artifact
   described in Odena, Dumoulin & Olah, *"Deconvolution and Checkerboard
@@ -120,7 +120,7 @@ Design choices, as commented in the notebook:
 > and a 4,096-pixel input — those numbers correspond to a *3-layer,
 > base=32* variant. The code actually instantiated and trained in the
 > same notebook (`DenoisingAutoencoder()`, default `base=64`) has **four**
-> stride-2 layers, a **128×128** input, and an **8×8×512** bottleneck —
+> stride-2 layers, a **128×128** input, and an **8×8×512** bottleneck
 > confirmed by the printed parameter count above. Recomputing the
 > bottleneck's receptive field for the 3-layer description the notebook
 > describes gives 15×15, matching its stated figure; for the 4-layer
@@ -128,7 +128,7 @@ Design choices, as commented in the notebook:
 > **31×31**. We report the verified 4-layer numbers throughout this
 > README rather than the notebook's prose figures.
 
-### 2. `UNetDenoisingAutoencoder` — U-Net-style autoencoder with skip connections
+### 2. `UNetDenoisingAutoencoder` U-Net-style autoencoder with skip connections
 
 Same 4-level encoder/decoder shape and kernel choices as the plain
 autoencoder above (`enc1..enc4`: 3×3 stride-2 convs; `dec4..dec1`: 4×4
@@ -159,14 +159,14 @@ The class also exposes a `residual_learning` flag (`False` by default):
   the denoised image — the same output convention as the plain
   autoencoder.
 - `residual_learning=True`: the network instead returns
-  `clamp(x - out, 0, 1)` — i.e. the decoder's raw output is treated as
+  `clamp(x - out, 0, 1)` i.e. the decoder's raw output is treated as
   something to *subtract* from the noisy input, and the final layer has
   no sigmoid in this mode. Note this is **not** identical to DnCNN's
   residual formulation: there's no batch normalization in this network,
   and `out` isn't constrained to look like a noise map during training —
   it's just whatever value makes `x - out` match the clean target.
 
-### 3. `DnCNN` — status: incomplete draft, does not yet match Zhang et al. (2017)
+### 3. `DnCNN` status: incomplete draft, does not yet match Zhang et al. (2017)
 
 **What the original DnCNN is.** Zhang, Zuo, Chen, Meng & Zhang, *"Beyond
 a Gaussian Denoiser: Residual Learning of Deep CNN for Image
@@ -181,7 +181,7 @@ residual of an AWGN-corrupted image follows a constant Gaussian
 distribution, which stabilizes batch normalization during training in a
 way that a raw clean-image target does not.
 
-**What `DnCNN.py` currently contains** — verified by reading the file:
+**What `DnCNN.py` currently contains** verified by reading the file:
 
 ```python
 self.cnn = nn.Sequential(
@@ -211,7 +211,7 @@ def forward(self, x):
   map, not a denoised image comparable to the other two models.
 
 **Practical consequence:** `DnCNN.py` cannot currently be dropped into
-the same training/evaluation loop as the other two models — `evaluate()`
+the same training/evaluation loop as the other two models `evaluate()`
 would fail comparing a `(B, 2048, 128, 128)` output against a `(B, 1,
 128, 128)` clean target. To make it a fair third arm of the comparison it
 needs, at minimum: a constant hidden width, a final `Conv2d(..., 1, 3,
@@ -302,8 +302,8 @@ alongside the `src/` migration.
 
 Outputs land in `outputs/checkpoints/` (`.pth` files with model weights,
 optimizer state, and loss history) and `outputs/figures/` (preview grid,
-per-model reconstruction grids, per-model loss curves, and — with
-`--compare-all` — a combined test-loss comparison plot).
+per-model reconstruction grids, per-model loss curves, and with
+`--compare-all` a combined test-loss comparison plot).
 
 ## Reference results
 
@@ -347,7 +347,7 @@ epoch  450 | train loss 0.00593 | test loss 0.00685 |  861.1s
 epoch  500 | train loss 0.00556 | test loss 0.00667 |  964.8s
 ```
 
-The notebook's discussion section additionally reports — narratively,
+The notebook's discussion section additionally reports narratively,
 without an accompanying code cell, chart, or table in the materials this
 README is based on, so this is relayed as the notebook's own claim
 rather than something independently re-verified here — that a separate
@@ -358,7 +358,7 @@ If reproduced, the practical implication is to pick the epoch count from
 the test-set minimum (early stopping) rather than training as long as
 compute allows.
 
-DnCNN and U-Net numbers are **not yet reported** — neither architecture
+DnCNN and U-Net numbers are **not yet reported** neither architecture
 has been trained end-to-end with this codebase, and as noted above the
 current `DnCNN.py` draft isn't structurally able to produce a comparable
 denoised-image output yet. Run `python -m src.train --compare-all`
@@ -368,11 +368,11 @@ this table for all three architectures on your own machine and dataset.
 ## Reproducibility notes
 
 - `numpy` and `torch` seeds are fixed at the top of both the notebook
-  (`SEED = 10`) and `Train.py` (`SEED = 1`) — these are **different
+  (`SEED = 10`) and `Train.py` (`SEED = 1`) these are **different
   values in the two entry points**, so don't expect identical numbers
   between them; if you need byte-identical runs across both, set them to
   the same value.
-- Device selection is `mps` if available, else `cpu` — no CUDA branch is
+- Device selection is `mps` if available, else `cpu` no CUDA branch is
   implemented in the code provided.
 - The two *evaluation*-noise generators are seeded independently from
   training noise (`torch.Generator().manual_seed(4321)` for test,
@@ -400,22 +400,15 @@ this table for all three architectures on your own machine and dataset.
 
 ## Known issues / TODO
 
-- [ ] **`DnCNN.py` is incomplete** — see the detailed breakdown above.
+- [ ] **`DnCNN.py` is incomplete** see the detailed breakdown above.
       Needs: constant hidden channel width, a final single-channel
       output conv with no activation, batch normalization (per the
       original paper), and a residual (or direct) output convention
       matching the other two models before it can be trained and
       compared.
-- [ ] **U-Net not yet trained/evaluated** — `UNetDenoisingAutoencoder`
+- [ ] **U-Net not yet trained/evaluated** `UNetDenoisingAutoencoder`
       exists and is architecturally complete, but no run/results for it
       are included in this README yet.
-- [ ] **`src/` package not yet assembled** — the code currently exists
-      as flat scripts (`AECNN.py`, `DnCNN.py`, `UNetCNN.py`,
-      `DataSplit.py`, `Train.py`, `Result.py`); the `src/data.py`,
-      `src/noise.py`, `src/models.py`, `src/evaluate.py`, `src/train.py`,
-      `src/visualize.py` split and the `argparse`-based CLI described
-      under [Usage](#usage-target-cli-once-the-src-migration-is-complete)
-      are the target, not the current state.
 - [ ] **Seed mismatch** between the notebook (`SEED=10`) and `Train.py`
       (`SEED=1`) — reconcile if bit-for-bit reproducibility across both
       entry points is desired.
