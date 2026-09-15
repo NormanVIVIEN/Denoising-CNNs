@@ -1,4 +1,4 @@
-# Denoising CNNs — Autoencoder vs. DnCNN vs. U-Net
+# Denoising CNNs : Autoencoder vs. DnCNN vs. U-Net
 
 A small, from-scratch comparison of three convolutional architectures for
 Gaussian image denoising: a plain convolutional **autoencoder**, **DnCNN**
