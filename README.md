@@ -184,15 +184,17 @@ while the other two only pay full resolution for one layer at each end.
 ```
 denoising-autoencoder/
 |-- README.md
+|-- notebook.ipynb              # the 11 section comparison described below, already executed once
 |-- requirements.txt
-|-- __init__.py         # "Source package for the denoising-autoencoder project."
-|-- data.py              # _to_gray64, load_from_folder, split_train_test, to_tensor, split_dataset, load_dataset
-|-- noise.py              # add_gaussian_noise, make_generator
-|-- models.py              # DenoisingAutoencoder, UNetDenoisingAutoencoder, DnCNN, MODEL_REGISTRY, build_model, count_parameters
-|-- evaluate.py             # evaluate, baseline, hybrid_loss, classical_baselines, format_comparison_table
-|-- train.py                 # set_seed, get_device, build_arg_parser, train_model, main
-|-- visualize.py               # preview_clean_noisy, grid_combined, plot_loss_curves, plot_final_metric_bars
-`-- notebook.ipynb              # the 11 section comparison described below, already executed once
+---|src/
+   |-- __init__.py         # "Source package for the denoising-autoencoder project."
+   |-- data.py              # _to_gray64, load_from_folder, split_train_test, to_tensor, split_dataset, load_dataset
+   |-- noise.py              # add_gaussian_noise, make_generator
+   |-- models.py              # DenoisingAutoencoder, UNetDenoisingAutoencoder, DnCNN, MODEL_REGISTRY, build_model, count_parameters
+   |-- evaluate.py             # evaluate, baseline, hybrid_loss, classical_baselines, format_comparison_table
+   |-- train.py                 # set_seed, get_device, build_arg_parser, train_model, main
+   |-- visualize.py               # preview_clean_noisy, grid_combined, plot_loss_curves, plot_final_metric_bars
+
 ```
 
 This tree matches what is actually in the project. `requirements.txt`
