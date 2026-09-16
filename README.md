@@ -186,7 +186,7 @@ denoising-autoencoder/
 |-- README.md
 |-- notebook.ipynb              # the 11 section comparison described below, already executed once
 |-- requirements.txt
----|src/
+|src/
    |-- __init__.py         # "Source package for the denoising-autoencoder project."
    |-- data.py              # _to_gray64, load_from_folder, split_train_test, to_tensor, split_dataset, load_dataset
    |-- noise.py              # add_gaussian_noise, make_generator
